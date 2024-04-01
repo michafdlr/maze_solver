@@ -40,13 +40,13 @@ class Maze:
         x_cell = self._x1 + i*self._cell_size_x
         y_cell = self._y1 + j*self._cell_size_y
         self._cells[i][j].draw(x_cell, y_cell, x_cell+self._cell_size_x, y_cell+self._cell_size_y)
-        self._animate()
+        self._animate(0.0001)
 
-    def _animate(self):
+    def _animate(self, sec=0.05):
         if self._win is None:
             return
         self._win.redraw()
-        time.sleep(0.05)
+        time.sleep(sec)
 
     def _break_entrance_and_exit(self):
         self._cells[0][0].has_top_wall = False
@@ -203,64 +203,41 @@ class Maze:
                         self._cells[i][j].draw_move(self._cells[i_n][j_n], undo=True)
         return False
 
-    # Alternative solution
-    def _solve_ra(self, i, j):
-        self._animate()
 
-        # vist the current cell
-        self._cells[i][j].visited = True
-
-        # if we are at the end cell, we are done!
-        if i == self._num_cols - 1 and j == self._num_rows - 1:
-            return True
-
-        # move left if there is no wall and it hasn't been visited
-        if (
-            i > 0
-            and not self._cells[i][j].has_left_wall
-            and not self._cells[i - 1][j].visited
-        ):
-            self._cells[i][j].draw_move(self._cells[i - 1][j])
-            if self._solve_ra(i - 1, j):
-                return True
-            else:
-                self._cells[i][j].draw_move(self._cells[i - 1][j], True)
-
-        # move right if there is no wall and it hasn't been visited
-        if (
-            i < self._num_cols - 1
-            and not self._cells[i][j].has_right_wall
-            and not self._cells[i + 1][j].visited
-        ):
-            self._cells[i][j].draw_move(self._cells[i + 1][j])
-            if self._solve_ra(i + 1, j):
-                return True
-            else:
-                self._cells[i][j].draw_move(self._cells[i + 1][j], True)
-
-        # move up if there is no wall and it hasn't been visited
-        if (
-            j > 0
-            and not self._cells[i][j].has_top_wall
-            and not self._cells[i][j - 1].visited
-        ):
-            self._cells[i][j].draw_move(self._cells[i][j - 1])
-            if self._solve_ra(i, j - 1):
-                return True
-            else:
-                self._cells[i][j].draw_move(self._cells[i][j - 1], True)
-
-        # move down if there is no wall and it hasn't been visited
-        if (
-            j < self._num_rows - 1
-            and not self._cells[i][j].has_bottom_wall
-            and not self._cells[i][j + 1].visited
-        ):
-            self._cells[i][j].draw_move(self._cells[i][j + 1])
-            if self._solve_ra(i, j + 1):
-                return True
-            else:
-                self._cells[i][j].draw_move(self._cells[i][j + 1], True)
-
-        # we went the wrong way let the previous cell know by returning False
-        return False
+    ## Add BFS algo
+    def solve_bfs(self, sec = 0.1):
+        queue = [(0,0)]
+        while queue:
+            i,j = queue.pop(0)
+            if i == self._num_cols-1 and j == self._num_rows-1:
+                return
+            for (i_n, j_n) in [(i+1, j), (i-1,j), (i, j+1), (i,j-1)]:
+                if (
+                    0<=i_n<self._num_cols
+                    and 0<=j_n<self._num_rows
+                    and not self._cells[i_n][j_n].visited
+                ):
+                    # move right
+                    if i_n>i and not self._cells[i][j].has_right_wall and not self._cells[i_n][j_n].has_left_wall:
+                        self._animate(sec)
+                        self._cells[i_n][j_n].visited = True
+                        self._cells[i][j].draw_move(self._cells[i_n][j_n])
+                        queue.append((i_n, j_n))
+                    # move left
+                    if i_n<i and not self._cells[i][j].has_left_wall and not self._cells[i_n][j_n].has_right_wall:
+                        self._animate(sec)
+                        self._cells[i_n][j_n].visited = True
+                        self._cells[i][j].draw_move(self._cells[i_n][j_n])
+                        queue.append((i_n, j_n))
+                    # move down
+                    if j_n>j and not self._cells[i][j].has_bottom_wall and not self._cells[i_n][j_n].has_top_wall:
+                        self._animate(sec)
+                        self._cells[i_n][j_n].visited = True
+                        self._cells[i][j].draw_move(self._cells[i_n][j_n])
+                        queue.append((i_n, j_n))
+                    # move up
+                    if j_n<j and not self._cells[i][j].has_top_wall and not self._cells[i_n][j_n].has_bottom_wall:
+                        self._animate(sec)
+                        self._cells[i_n][j_n].visited = True
+                        self._cells[i][j].draw_move(self._cells[i_n][j_n])
+                        queue.append((i_n, j_n))

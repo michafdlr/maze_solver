@@ -26,14 +26,15 @@ class Maze:
             random.seed(seed)
 
         self._create_cells()
-        self._break_walls_ra(0,0)
+        self._break_entrance_and_exit()
+        self._break_walls_r(0,0)
+        self._reset_cells_visited()
 
     def _create_cells(self):
         self._cells = [[Cell(self._win) for _ in range(self._num_rows)] for _ in range(self._num_cols)]
         for col in range(self._num_cols):
             for row in range(self._num_rows):
                 self._draw_cell(col, row)
-        self._break_entrance_and_exit()
 
     def _draw_cell(self, i, j):
         x_cell = self._x1 + i*self._cell_size_x
@@ -98,12 +99,11 @@ class Maze:
             else:
                 self._cells[i][j].has_left_wall=False
                 self._cells[new_i][new_j].has_right_wall = False
-            self._draw_cell(i,j)
-            self._draw_cell(new_i, new_j)
-            #if new_i == self._num_cols-1 and new_j == self._num_cols-1:
-            #    return
+            #self._draw_cell(i,j)
+            #self._draw_cell(new_i, new_j)
             self._break_walls_r(new_i, new_j)
 
+    # Alternative Recursion
     def _break_walls_ra(self, i, j):
         self._cells[i][j].visited = True
         while True:
@@ -153,3 +153,8 @@ class Maze:
 
             # recursively visit the next cell
             self._break_walls_ra(next_index[0], next_index[1])
+
+    def _reset_cells_visited(self):
+        for col in range(self._num_cols):
+            for row in range(self._num_rows):
+                self._cells[col][row].visited = False

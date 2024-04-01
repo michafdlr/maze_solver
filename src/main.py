@@ -1,4 +1,4 @@
-from utils import Window, Line, Point, Cell
+from utils import Window
 from maze_funcs import Maze
 def main():
     WIDTH, HEIGHT = 800, 600

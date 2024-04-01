@@ -1,4 +1,4 @@
-from tkinter import Tk, BOTH, Canvas
+from tkinter import Tk, BOTH, Canvas, Button
 
 class Window:
     def __init__(self, width, height):
@@ -20,6 +20,7 @@ class Window:
         self.__running = False
     def draw_line(self, line, fill_color):
         line.draw(self.__canvas, fill_color)
+
 
 class Point:
     def __init__(self, x=0, y=0):

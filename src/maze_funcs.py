@@ -202,6 +202,7 @@ class Maze:
                     else:
                         self._cells[i][j].draw_move(self._cells[i_n][j_n], undo=True)
         return False
+
     # Alternative solution
     def _solve_ra(self, i, j):
         self._animate()

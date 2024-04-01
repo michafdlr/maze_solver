@@ -39,7 +39,7 @@ class Line:
         canvas.pack(fill=BOTH, expand=1)
 
 class Cell:
-    def __init__(self, win):
+    def __init__(self, win=None):
         self.has_left_wall = True
         self.has_right_wall = True
         self.has_bottom_wall = True
@@ -55,6 +55,8 @@ class Cell:
         self._y1 = y1
         self._x2 = x2
         self._y2 = y2
+        if not self._win:
+            return
         if self.has_left_wall:
             line = Line(Point(self._x1,self._y1), Point(self._x1, self._y2))
             self._win.draw_line(line, fill_color="black")
@@ -77,6 +79,8 @@ class Cell:
         if undo:
             fill_color = "gray"
         # move right
+        if not self._win:
+            return
         if self._x1 < to_cell._x1:
             line = Line(Point(mid_x_from, mid_y_from), Point(self._x2, mid_y_from))
             self._win.draw_line(line, fill_color=fill_color)

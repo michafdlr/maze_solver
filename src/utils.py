@@ -84,37 +84,42 @@ class Cell:
             self._win.draw_line(line, fill_color="white")
 
     def draw_move(self, to_cell, undo=False):
-        mid_x_from = (self._x1 + self._x2)/2
-        mid_y_from = (self._y1 + self._y2)/2
-        mid_x_to = (to_cell._x1 + to_cell._x2)/2
-        mid_y_to = (to_cell._y1 + to_cell._y2)/2
+        if self._win is None:
+            return
+        x_mid = (self._x1 + self._x2) / 2
+        y_mid = (self._y1 + self._y2) / 2
+
+        to_x_mid = (to_cell._x1 + to_cell._x2) / 2
+        to_y_mid = (to_cell._y1 + to_cell._y2) / 2
+
         fill_color = "red"
         if undo:
             fill_color = "gray"
-        # move right
-        if not self._win:
-            return
-        if self._x1 < to_cell._x1:
-            line = Line(Point(mid_x_from, mid_y_from), Point(self._x2, mid_y_from))
-            self._win.draw_line(line, fill_color=fill_color)
-            line = Line(Point(to_cell._x1, mid_y_to), Point(mid_x_to, mid_y_to))
-            self._win.draw_line(line, fill_color=fill_color)
-        # move left
-        elif self._x1 > to_cell._x1:
-            line = Line(Point(self._x1, mid_y_from), Point(mid_x_from, mid_y_from))
-            self._win.draw_line(line, fill_color=fill_color)
-            line = Line(Point(mid_x_to, mid_y_to), Point(self._x2, mid_y_to))
-            self._win.draw_line(line, fill_color=fill_color)
-        #moving up
-        elif self._y1 > to_cell._y1:
-            line = Line(Point(mid_x_from, mid_y_from), Point(mid_x_from, self._y1))
+
+        # moving left
+        if self._x1 > to_cell._x1:
+            line = Line(Point(self._x1, y_mid), Point(x_mid, y_mid))
             self._win.draw_line(line, fill_color)
-            line = Line(Point(mid_x_to, to_cell._y2), Point(mid_x_to, mid_y_to))
+            line = Line(Point(to_x_mid, to_y_mid), Point(to_cell._x2, to_y_mid))
+            self._win.draw_line(line, fill_color)
+
+        # moving right
+        elif self._x1 < to_cell._x1:
+            line = Line(Point(x_mid, y_mid), Point(self._x2, y_mid))
+            self._win.draw_line(line, fill_color)
+            line = Line(Point(to_cell._x1, to_y_mid), Point(to_x_mid, to_y_mid))
+            self._win.draw_line(line, fill_color)
+
+        # moving up
+        elif self._y1 > to_cell._y1:
+            line = Line(Point(x_mid, y_mid), Point(x_mid, self._y1))
+            self._win.draw_line(line, fill_color)
+            line = Line(Point(to_x_mid, to_cell._y2), Point(to_x_mid, to_y_mid))
             self._win.draw_line(line, fill_color)
 
         # moving down
         elif self._y1 < to_cell._y1:
-            line = Line(Point(mid_x_from, mid_y_from), Point(mid_x_from, self._y2))
+            line = Line(Point(x_mid, y_mid), Point(x_mid, self._y2))
             self._win.draw_line(line, fill_color)
-            line = Line(Point(mid_x_to, mid_y_to), Point(mid_x_to, to_cell._y1))
+            line = Line(Point(to_x_mid, to_y_mid), Point(to_x_mid, to_cell._y1))
             self._win.draw_line(line, fill_color)
